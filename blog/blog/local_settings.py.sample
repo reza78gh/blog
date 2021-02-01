@@ -1,0 +1,10 @@
+SECRET_KEY = 'enter your SECRET_KEY her'
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'database name',
+        'USER': 'database user',
+        'PASSWORD':'database password'
+    }
+}
