@@ -1,14 +1,14 @@
 from django.shortcuts import render
 from .forms import *
 from .models import *
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 def home(request):
     posts = Post.objects.all()
-    # print(list(Post.tag.all()))
     return render(request,'weblog/base.html',{'posts':posts})
 
-
+@login_required
 def new_post(request):
     if request.POST:
         form = NewPost(request.POST,request.FILES)

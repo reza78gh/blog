@@ -106,6 +106,8 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+AUTH_USER_MODEL = 'weblog.User'
+
 MEDIA_ROOT = BASE_DIR / 'media'
 
-AUTH_USER_MODEL = 'weblog.User'
+LOGIN_REDIRECT_URL = '/'
