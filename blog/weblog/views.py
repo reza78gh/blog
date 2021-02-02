@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render,HttpResponseRedirect,reverse
 from .forms import *
 from .models import *
 from django.contrib.auth.decorators import login_required
@@ -22,3 +22,13 @@ def new_post(request):
     else:
         form = NewPost()
     return render(request,"weblog/new_post.html",{'form':form})
+
+def register(request):
+    if request.POST:
+        form = NewUserForm(request.POST,request.FILES)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse('weblog:home'))
+    else:
+        form = NewUserForm()
+    return render(request,'weblog/register.html',{'form':form})

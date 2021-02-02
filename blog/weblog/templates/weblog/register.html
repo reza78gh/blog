@@ -1,0 +1,12 @@
+{% extends 'weblog/base.html' %}
+
+{% block title %}ثبت نام{% endblock title %}
+{% block body %}
+<form enctype="multipart/form-data" action="{% url 'weblog:register' %}" method="POST">
+    {% csrf_token %}
+    <table>
+        {{ form.as_table }}
+    </table>
+    <input type="submit" value="ثبت نام">
+</form>
+{% endblock body %}

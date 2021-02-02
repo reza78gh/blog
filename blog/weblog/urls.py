@@ -8,5 +8,6 @@ app_name = 'weblog'
 urlpatterns = [
     path('', views.home, name="home"),
     path('new-post/', views.new_post, name="new_post"),
-    path("accounts/",include('django.contrib.auth.urls'))
+    path("accounts/",include('django.contrib.auth.urls')),
+    path('register/', views.register, name="register"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
