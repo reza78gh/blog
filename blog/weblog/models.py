@@ -3,6 +3,10 @@ from django.contrib.auth.models import AbstractUser
 
 
 class User(AbstractUser):
+    class Meta:
+        permissions = [('can_write','can write post'),
+                       ('can_edit','can accept and edit other posts and comments'),
+                       ('can_manage','can manage all content and users')]
     phone = models.PositiveIntegerField("شماره",null=True)
     image = models.ImageField("تصویر", upload_to='users',null=True)
     
