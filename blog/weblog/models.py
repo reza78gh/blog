@@ -2,6 +2,11 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 
 
+class User(AbstractUser):
+    phone = models.PositiveIntegerField("شماره",null=True)
+    image = models.ImageField("تصویر", upload_to='users',null=True)
+    
+    
 class Post(models.Model):
     title = models.CharField("عنوان",max_length=70)
     text = models.TextField("متن")
@@ -43,13 +48,3 @@ class Like(models.Model):
     
     def __str__(self):
         return 'like' if self.value else 'dislike'
-    
-    
-class User(AbstractUser):
-    # first_name = models.CharField("نام",max_length=70)
-    # last_name = models.CharField("نام خانوادگی",max_length=70)
-    # user = models.OneToOneField(User, verbose_name="کاربر", on_delete=models.CASCADE)
-    phone = models.PositiveIntegerField("شماره",null=True)
-    image = models.ImageField("تصویر", upload_to='users',null=True)
-    
-    # REQUIRED_FIELD = 'username'
