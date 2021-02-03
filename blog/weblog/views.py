@@ -1,14 +1,14 @@
 from django.shortcuts import render,HttpResponseRedirect,reverse
 from .forms import *
 from .models import *
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import permission_required
 
 # Create your views here.
 def home(request):
     posts = Post.objects.all()
     return render(request,'weblog/base.html',{'posts':posts})
 
-@login_required
+@permission_required("weblog.can_write")
 def new_post(request):
     if request.POST:
         form = NewPost(request.POST,request.FILES)
