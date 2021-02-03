@@ -1,4 +1,5 @@
 from django.forms import ModelForm
+from django.contrib.auth.forms import UserCreationForm
 from .models import Post, User
 
 class NewPost(ModelForm):
@@ -6,7 +7,8 @@ class NewPost(ModelForm):
         model = Post
         fields = ['title','text','img','activate','tag','category']
         
-class NewUserForm(ModelForm):
-    class Meta:
+
+class NewUserForm(UserCreationForm):
+    class Meta(UserCreationForm):
         model = User
-        fields = ['first_name','last_name','phone','image','username','password']
+        fields = ['first_name','last_name','phone','image','username']
