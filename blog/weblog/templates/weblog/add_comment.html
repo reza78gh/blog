@@ -1,0 +1,9 @@
+{% extends 'weblog/base.html' %}
+{% block title %}ایجاد کامنت{% endblock title %}
+{% block body %}
+<form action="{% url 'weblog:add_comment' post_id=post_id %}" method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="ثبت">
+</form>
+{% endblock body %}

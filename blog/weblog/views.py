@@ -1,7 +1,7 @@
 from django.shortcuts import render,HttpResponseRedirect,reverse
 from .forms import *
 from .models import *
-from django.contrib.auth.decorators import permission_required
+from django.contrib.auth.decorators import permission_required,login_required
 
 # Create your views here.
 def home(request):
@@ -18,7 +18,6 @@ def new_post(request):
             post = form.save(commit=False)
             post.author = request.user
             post.save()
-            post.save_m2m()
     else:
         form = NewPost()
     return render(request,"weblog/new_post.html",{'form':form})
@@ -32,3 +31,17 @@ def register(request):
     else:
         form = NewUserForm()
     return render(request,'weblog/register.html',{'form':form})
+
+
+@login_required
+def add_comment(request,post_id):
+    if request.POST:
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            Comment.objects.create(text=form.cleaned_data['text'],
+                                   post=Post.objects.get(id=post_id),
+                                   user=request.user)
+            return HttpResponseRedirect(reverse('weblog:home'))
+    else:
+        form = CommentForm()
+    return render(request,'weblog/add_comment.html',{'form':form, 'post_id':post_id})

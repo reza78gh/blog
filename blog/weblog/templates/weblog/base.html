@@ -61,11 +61,19 @@
           {% endfor %}
           <div class="d-flex justify-content-between align-items-center">
             <div class="btn-group">
-              <button type="button" class="btn btn-sm btn-outline-secondary">View</button>
-              <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>
+              <button type="button" class="btn btn-sm btn-outline-secondary">like</button>
+              <a href="{% url 'weblog:add_comment' post_id=post.id %}"><button type="button" class="btn btn-sm btn-outline-secondary">comment</button></a>
             </div>
             <small class="text-muted">9 mins</small>
           </div>
+          {% for comment in post.post_comment.all %}
+          {% if comment.accepted %}
+            <hr>
+            <h5>{{ comment.user }}</h5>
+            <p>{{ comment }}</p>
+          {% endif %}
+          {% endfor %}
+
         </div>
       </div>
     </div>
