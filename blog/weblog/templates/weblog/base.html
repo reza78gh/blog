@@ -1,4 +1,5 @@
 {% load static %}
+{% load weblog_extras %}
 <!DOCTYPE html>
 <html lang="en" dir="rtl">
 <head>
@@ -61,11 +62,14 @@
           {% endfor %}
           <div class="d-flex justify-content-between align-items-center">
             <div class="btn-group">
-              <button type="button" class="btn btn-sm btn-outline-secondary">like</button>
-              <a href="{% url 'weblog:add_comment' post_id=post.id %}"><button type="button" class="btn btn-sm btn-outline-secondary">comment</button></a>
+              <a href="{% url 'weblog:like' post_id=post.id value=1 %}"><button type="button" class="btn btn-sm {{ post|liked:request.user }}">پسندیدن</button></a>
+              <a href="{% url 'weblog:like' post_id=post.id value=0 %}"><button type="button" class="btn btn-sm {{ post|disliked:request.user }}">نپسندیدن</button></a>
+              <a href="{% url 'weblog:add_comment' post_id=post.id %}"><button type="button" class="btn btn-sm btn-outline-secondary">نظر</button></a>
             </div>
             <small class="text-muted">9 mins</small>
           </div>
+          <p><span>{{ post.post_like|count_like }}</span> پسندها</p>
+          <p><span>{{ post.post_like|count_dislike }}</span> نپسندها</p>
           {% for comment in post.post_comment.all %}
           {% if comment.accepted %}
             <hr>

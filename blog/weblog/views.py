@@ -2,6 +2,7 @@ from django.shortcuts import render,HttpResponseRedirect,reverse
 from .forms import *
 from .models import *
 from django.contrib.auth.decorators import permission_required,login_required
+from django.db import IntegrityError
 
 # Create your views here.
 def home(request):
@@ -45,3 +46,14 @@ def add_comment(request,post_id):
     else:
         form = CommentForm()
     return render(request,'weblog/add_comment.html',{'form':form, 'post_id':post_id})
+
+@login_required
+def like(request,post_id,value):
+    print("post_id")
+    post = Post.objects.get(id=post_id)
+    user = request.user
+    try:
+        Like.objects.create(post=post, user=user, value=bool(value))
+    except IntegrityError:
+        Like.objects.filter(post=post,user=user).update(value=value)
+    return HttpResponseRedirect(reverse('weblog:home'))
