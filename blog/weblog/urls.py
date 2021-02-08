@@ -7,6 +7,7 @@ from django.conf.urls.static import static
 app_name = 'weblog'
 urlpatterns = [
     path('', views.home, name="home"),
+    path('<int:category_id>', views.home, name="category"),
     path('new-post/', views.new_post, name="new_post"),
     path("accounts/",include('django.contrib.auth.urls')),
     path('register/', views.register, name="register"),

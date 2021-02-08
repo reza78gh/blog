@@ -5,9 +5,30 @@ from django.contrib.auth.decorators import permission_required,login_required
 from django.db import IntegrityError
 
 # Create your views here.
-def home(request):
-    posts = Post.objects.all()
-    return render(request,'weblog/base.html',{'posts':posts})
+def subtract(queryset,res=''):
+    res += f'<li><a href="{queryset.id}" class="text-decoration-none">'+str(queryset)+'</a></li>'
+    if queryset.sub_category.all(): res += '<ul class = "list-unstyled">'
+    for sub in queryset.sub_category.all():
+        res += subtract(sub)
+    if queryset.sub_category.all(): res += '</ul>'
+    return res
+
+def subtract2(queryset,res):
+    res.append(queryset)
+    for sub in queryset.sub_category.all():
+        res = subtract2(sub,res)
+    return res
+    
+def home(request,category_id=None):
+    if category_id:
+        c = subtract2(Category.objects.get(pk=category_id),[])
+        posts = Post.objects.filter(category__in=c)
+    else:
+        posts = Post.objects.all()
+    Category_html = ''
+    for sub in Category.objects.filter(parent=None):
+        Category_html += subtract(sub)
+    return render(request,'weblog/base.html',{'posts':posts,'category':Category_html})
 
 @permission_required("weblog.can_write")
 def new_post(request):

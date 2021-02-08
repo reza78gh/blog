@@ -20,7 +20,7 @@ class Post(models.Model):
     accepted = models.BooleanField("تایید",default=False)
     tag = models.ManyToManyField("Tag",related_name="tag_post",verbose_name="تگ ها")
     author = models.ForeignKey("User", verbose_name="نویسنده",related_name='author_post' ,on_delete=models.CASCADE)
-    category = models.CharField("دسته بندی",max_length=50)
+    category = models.ForeignKey("Category",verbose_name="دسته بندی",on_delete=models.CASCADE)
     
     def __str__(self):
         return self.title
@@ -35,7 +35,7 @@ class Tag(models.Model):
     
 class Comment(models.Model):
     post = models.ForeignKey("Post", verbose_name="پست",related_name='post_comment', on_delete=models.CASCADE)
-    text = models.CharField("متن",max_length=700)
+    text = models.TextField("متن")
     accepted = models.BooleanField("تایید",default=False)
     user = models.ForeignKey("User", verbose_name="کاربر",related_name='user_comment', on_delete=models.CASCADE)
     
@@ -52,3 +52,10 @@ class Like(models.Model):
     
     def __str__(self):
         return 'like' if self.value else 'dislike'
+    
+class Category(models.Model):
+    name = models.CharField("نام",max_length=30)
+    parent = models.ForeignKey('Category',related_name="sub_category",null=True,blank=True,on_delete=models.SET_NULL)
+    
+    def __str__(self):
+        return self.name
