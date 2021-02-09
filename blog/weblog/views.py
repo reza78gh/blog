@@ -21,14 +21,16 @@ def subtract2(queryset,res):
     
 def home(request,category_id=None):
     if category_id:
-        c = subtract2(Category.objects.get(pk=category_id),[])
+        title = Category.objects.get(pk=category_id)
+        c = subtract2(title,[])
         posts = Post.objects.filter(category__in=c)
     else:
+        title = ''
         posts = Post.objects.all()
     Category_html = ''
     for sub in Category.objects.filter(parent=None):
         Category_html += subtract(sub)
-    return render(request,'weblog/base.html',{'posts':posts,'category':Category_html})
+    return render(request,'weblog/base.html',{'posts':posts,'category':Category_html, 'title':title})
 
 @permission_required("weblog.can_write")
 def new_post(request):
@@ -70,11 +72,15 @@ def add_comment(request,post_id):
 
 @login_required
 def like(request,post_id,value):
-    print("post_id")
     post = Post.objects.get(id=post_id)
     user = request.user
     try:
         Like.objects.create(post=post, user=user, value=bool(value))
     except IntegrityError:
-        Like.objects.filter(post=post,user=user).update(value=value)
+        like = Like.objects.get(post=post,user=user)
+        if like.value == value:
+            like.delete()
+        else:
+            like.value=value
+            like.save()
     return HttpResponseRedirect(reverse('weblog:home'))
