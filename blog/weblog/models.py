@@ -15,7 +15,7 @@ class Post(models.Model):
     title = models.CharField("عنوان",max_length=70)
     text = models.TextField("متن")
     img = models.ImageField(upload_to='posts')
-    creadet_time = models.DateTimeField("تاریخ ایجاد",auto_now=True)
+    created_time = models.DateTimeField("تاریخ ایجاد",auto_now_add=True)
     activate = models.BooleanField("فعال",default=True)
     accepted = models.BooleanField("تایید",default=False)
     tag = models.ManyToManyField("Tag",related_name="tag_post",verbose_name="تگ ها")
