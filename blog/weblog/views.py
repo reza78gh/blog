@@ -7,7 +7,8 @@ from django.views import generic
 
 # Create your views here.
 def subtract(queryset,res=''):
-    res += f'<li><a href="{queryset.id}" class="text-decoration-none">'+str(queryset)+'</a></li>'
+    href = '{% url "weblog:category" '+str(queryset)+' %}'
+    res += f'<li><a href="{href}" class="text-decoration-none">'+str(queryset)+'</a></li>'
     if queryset.sub_category.all(): res += '<ul>'
     for sub in queryset.sub_category.all():
         res += subtract(sub)
@@ -20,11 +21,15 @@ def subtract2(queryset,res):
         res = subtract2(sub,res)
     return res
     
-def home(request,category_id=None):
-    if category_id:
-        title = Category.objects.get(pk=category_id)
+def home(request,pk=None,mode=None):
+    print(mode)
+    if mode == 'category':
+        title = Category.objects.get(pk=pk)
         c = subtract2(title,[])
         posts = Post.objects.filter(category__in=c)
+    elif mode == 'tag':
+        title = Tag.objects.get(pk=pk)
+        posts = Post.objects.filter(tag=title)
     else:
         title = ''
         posts = Post.objects.all()
@@ -44,9 +49,11 @@ def new_post(request):
             post = form.save(commit=False)
             post.author = request.user
             post.save()
+            post.tag.set(Tag.objects.filter(name__in=request.POST.getlist('tags')))
     else:
         form = NewPost()
-    return render(request,"weblog/new_post.html",{'form':form})
+    tags = Tag.objects.all()
+    return render(request,"weblog/new_post.html",{'form':form,'tags':tags})
 
 def register(request):
     if request.POST:
@@ -71,27 +78,6 @@ def add_comment(request,post_id):
     else:
         form = CommentForm()
     return render(request,'weblog/add_comment.html',{'form':form, 'post_id':post_id})
-
-@login_required
-def like(request,post_id,value):
-    print(request.get_full_path())
-    print(request.GET.get('next'))
-    print(request.GET.get('idd'))
-    post = Post.objects.get(id=post_id)
-    user = request.user
-    try:
-        Like.objects.create(post=post, user=user, value=bool(value))
-    except IntegrityError:
-        like = Like.objects.get(post=post,user=user)
-        if like.value == value:
-            like.delete()
-        else:
-            like.value=value
-            like.save()
-    if request.GET['next'] == 'detail':
-        return HttpResponseRedirect(reverse('weblog:detail_post',args=(request.GET['post_id'])))
-    else:
-        return HttpResponseRedirect(reverse('weblog:home'))
 
 
 class DetailPostView(generic.DetailView):

@@ -4,6 +4,16 @@
 <form enctype="multipart/form-data" action="{% url 'weblog:new_post' %}" method="POST">
     {% csrf_token %}
     {{ form.as_p }}
+    <label for=""></label>
+    <div class="all-tags d-flex flex-column w-25">
+        <input type="text" name="tags" id="tag" class="m-1" list="citynames">
+        <datalist id="citynames">
+        {% for tag in tags %}
+            <option value="{{ tag }}"></option>
+        {% endfor %}
+        </datalist>
+    </div>
+    <div><button type="button" onclick="newrow()">افزودن تگ</button></div>
     <input type="submit" value="ثبت">
 </form>
 {% endblock body %}

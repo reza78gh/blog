@@ -5,7 +5,7 @@ from .models import Post, User, Comment
 class NewPost(ModelForm):
     class Meta:
         model = Post
-        fields = ['title','text','img','activate','tag','category']
+        fields = ['title','text','img','activate','category']
         
 
 class NewUserForm(UserCreationForm):
