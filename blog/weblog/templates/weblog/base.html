@@ -50,15 +50,14 @@
         </div>
       </nav>
 
-{% block body %}
-          
-        
         <div class="collapse" id="collapseExample">
           <div class="card card-body">
             {{ category|safe }}
           </div>
           <div id="categories" class="d-flex"></div>
         </div>
+{% block body %}
+       
   <div class="row w-100 mb-2">
   <h3 class="text-secondary">{{ title }}</h3>
   {% csrf_token %}

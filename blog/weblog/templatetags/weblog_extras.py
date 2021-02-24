@@ -17,3 +17,11 @@ def liked(obj,user):
 @register.filter    
 def disliked(obj,user):
     return 'btn-secondary' if obj.post_like.filter(user=user,value=False) else 'btn-outline-secondary'
+
+@register.filter    
+def comment_liked(obj,user):
+    return 'btn-danger' if obj.comment_like.filter(user=user,value=True) else 'btn-outline-danger'
+
+@register.filter    
+def comment_disliked(obj,user):
+    return 'btn-secondary' if obj.comment_like.filter(user=user,value=False) else 'btn-outline-secondary'

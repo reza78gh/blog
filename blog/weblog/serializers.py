@@ -1,8 +1,8 @@
 from rest_framework import serializers
-from .models import Category ,Comment, LikePost
+from .models import Category ,Comment, LikePost, LikeComment
 
 
-class PostSerializer(serializers.ModelSerializer):
+class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = ('id', 'name', 'parent')
@@ -26,3 +26,9 @@ class LikePostSerializer(serializers.ModelSerializer):
     class Meta:
         model = LikePost
         fields = ('id','value','user','post')
+
+class LikeCommentSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(read_only=True)
+    class Meta:
+        model = LikeComment
+        fields = ('id','value','user','comment')
