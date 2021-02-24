@@ -42,14 +42,28 @@
               </li>
               {% endif %}
             </ul>
-            <form class="d-flex">
-              <input class="form-control ms-2" type="search" placeholder="Search" aria-label="Search">
+            <form class="d-flex" method="POST" action="{% url 'weblog:search' %}">
+              {% csrf_token %}
+              <input class="form-control ms-2" name="search" type="search" placeholder="Search" aria-label="Search">
+              <input type="hidden" name="mode" value="normal">
               <button class="btn btn-outline-success" type="submit">Search</button>
             </form>
           </div>
         </div>
       </nav>
-
+      <form class="d-flex" method="POST" action="{% url 'weblog:search' %}">
+        {% csrf_token %}
+        <label for="title">عنوان</label>
+        <input class="form-control ms-2" name="title" type="search" placeholder="عنوان شامل..." aria-label="Search">
+        <label for="text">متن</label>
+        <input class="form-control ms-2" name="text" type="search" placeholder="متن شامل..." aria-label="Search">
+        <label for="author">نویسنده</label>
+        <input class="form-control ms-2" name="author" type="search" placeholder="نویسنده شامل..." aria-label="Search">
+        <label for="tag">برچسب</label>
+        <input class="form-control ms-2" name="tag" type="search" placeholder="برچسب شامل..." aria-label="Search">
+        <input type="hidden" name="mode" value="advance">
+        <button class="btn btn-outline-success" type="submit">Search</button>
+      </form>
         <div class="collapse" id="collapseExample">
           <div class="card card-body">
             {{ category|safe }}
@@ -62,15 +76,16 @@
   <h3 class="text-secondary">{{ title }}</h3>
   {% csrf_token %}
 {% for post in posts %}
-    <div class="container col-md-11">
+    <div id="{{post.id}}" class="container col-md-11">
       <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
         <div class="col p-4 d-flex flex-column position-static">
           <strong class="d-inline-block mb-2 text-primary">{{ post.category }}</strong>
           <a href="{% url 'weblog:detail_post' post.id %}" class="text-decoration-none text-dark">
           <h3 class="mb-0">{{ post.title }}</h3>
           <div class="mb-1 text-muted">{{ post.created_time }}</div>
+          <span class="text-danger" id="author">{{ post.author }}</span>
           <p class="card-text mb-auto">{{ post.text }}</p></a>
-          <div class="d-flex">
+          <div class="d-flex" id="tags">
           {% for tag in post.tag.all %}
             <a href="{% url 'weblog:tag' tag.id %}" class='text-decoration-none'>#{{ tag }}</a>
           {% endfor %}
@@ -97,7 +112,7 @@
         </div>
         </div>
         <div class="col-auto d-none d-lg-block">
-          <img src="{{ post.img }}" width="250px" height="250px" alt="Card image cap">
+          <img src="/{{ post.img }}" width="250px" height="250px" alt="Card image cap">
         </div>
       </div>
     </div>

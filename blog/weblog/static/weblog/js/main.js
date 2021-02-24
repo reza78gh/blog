@@ -10,9 +10,6 @@ function load_posts() {
                 // console.log(json[i])
                 if (json[i].parent==null){
                     $("#categories").prepend("<ul>"+get_child(json, json[i])+"</ul>");}
-                    // $(".navbar").after("<ul>"+get_child(json, json[i])+"</ul>");}
-                    // $("#categories").prepend("<li id='post-"+json[i].id+"'><strong>"+json[i].name+"</strong>"+
-                    // "<ul>"+get_child(json, json[i])+"</ul>"+"</li>");}
             }
         },
         // handle a non-successful response
@@ -35,7 +32,7 @@ function sub_child(json,parent_id) {
 };
 
 function get_child(json,parent) {
-    res = '<li><a href="category/'+parent.id+'/" class="text-decoration-none">'+parent.name+'</a></li>'
+    res = '<li><a href="/category/'+parent.id+'/" class="text-decoration-none">'+parent.name+'</a></li>'
     var ch = sub_child(json, parent.id)
     if (ch){res += '<ul>'} 
     for (var x in ch){

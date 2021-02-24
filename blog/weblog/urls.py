@@ -14,4 +14,5 @@ urlpatterns = [
     path('register/', views.register, name="register"),
     path('add-comment/<int:post_id>', views.add_comment, name="add_comment"),
     path('post/<int:pk>', views.DetailPostView.as_view(), name="detail_post"),
+    path('search/', views.search, name="search"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

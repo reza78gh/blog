@@ -4,16 +4,10 @@ from .models import *
 from django.contrib.auth.decorators import permission_required,login_required
 from django.db import IntegrityError
 from django.views import generic
-
+import requests
+import re
+from bs4 import BeautifulSoup
 # Create your views here.
-def subtract(queryset,res=''):
-    href = '{% url "weblog:category" '+str(queryset)+' %}'
-    res += f'<li><a href="{href}" class="text-decoration-none">'+str(queryset)+'</a></li>'
-    if queryset.sub_category.all(): res += '<ul>'
-    for sub in queryset.sub_category.all():
-        res += subtract(sub)
-    if queryset.sub_category.all(): res += '</ul>'
-    return res
 
 def subtract2(queryset,res):
     res.append(queryset)
@@ -22,7 +16,6 @@ def subtract2(queryset,res):
     return res
     
 def home(request,pk=None,mode=None):
-    print(mode)
     if mode == 'category':
         title = Category.objects.get(pk=pk)
         c = subtract2(title,[])
@@ -33,19 +26,13 @@ def home(request,pk=None,mode=None):
     else:
         title = ''
         posts = Post.objects.all()
-    Category_html = '<div class="d-flex">'
-    for sub in Category.objects.filter(parent=None):
-        Category_html += f'<div class="me-5">{subtract(sub)}</div>'  
-    Category_html += '</div>'
-    return render(request,'weblog/base.html',{'posts':posts,'category':Category_html, 'title':title})
+    return render(request,'weblog/base.html',{'posts':posts, 'title':title})
 
 @permission_required("weblog.can_write")
 def new_post(request):
     if request.POST:
         form = NewPost(request.POST,request.FILES)
-        print("ok welldown",request.user)
         if form.is_valid():
-            print(form.cleaned_data)
             post = form.save(commit=False)
             post.author = request.user
             post.save()
@@ -83,13 +70,34 @@ def add_comment(request,post_id):
 class DetailPostView(generic.DetailView):
     model = Post
     template_name = 'weblog/detail_post.html'
-    
-    # def get(self, request, *args, **kwargs):
-    #     context = locals()
-    #     context['comment_form'] = CommentForm()
-    #     return render_to_response(self.response_template, context, context_instance=RequestContext(request))
-    
+        
     def get_context_data(self, **kwargs):          
         context = super().get_context_data(**kwargs)                     
         context['comment_form'] = CommentForm()
         return context
+    
+    
+def search(request):
+    if request.POST:
+        r = requests.get('http://127.0.0.1:8000/')
+        soup = BeautifulSoup(r.content, 'html.parser')
+        all_posts = soup.find_all('div',{'class':'container col-md-11'})
+        if request.POST['mode'] == 'normal':
+            posts = [i['id'] for i in all_posts if i.find_all(text=re.compile(request.POST['search']))]
+            mypost = Post.objects.filter(id__in=posts)
+        elif request.POST['mode'] == 'advance':
+            posts = set()
+            if request.POST['title']:
+                title = {i['id'] for i in all_posts if i.find('h3').find_all(text=re.compile(request.POST['title']))}
+                posts = posts&title if posts else title
+            if request.POST['text']:
+                text = {i['id'] for i in all_posts if i.find('p',{'class':'card-text'}).find_all(text=re.compile(request.POST['text']))}
+                posts = posts&text if posts else text
+            if request.POST['author']:
+                author = {i['id'] for i in all_posts if i.find('span',{'id':'author'}).find_all(text=re.compile(request.POST['author']))}
+                posts = posts&author if posts else author
+            if request.POST['tag']:
+                tag = {i['id'] for i in all_posts if i.find('div',{'id':'tags'}).find_all(text=re.compile(request.POST['tag']))}
+                posts = posts&tag if posts else tag
+            mypost = Post.objects.filter(id__in=posts)
+        return render(request,'weblog/base.html',{'posts':mypost})
