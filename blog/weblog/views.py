@@ -81,7 +81,7 @@ def search(request):
     if request.POST:
         r = requests.get('http://127.0.0.1:8000/')
         soup = BeautifulSoup(r.content, 'html.parser')
-        all_posts = soup.find_all('div',{'class':'container col-md-11'})
+        all_posts = soup.find_all('div',{'class':'col'})
         if request.POST['mode'] == 'normal':
             posts = [i['id'] for i in all_posts if i.find_all(text=re.compile(request.POST['search']))]
             mypost = Post.objects.filter(id__in=posts)
@@ -94,7 +94,7 @@ def search(request):
                 text = {i['id'] for i in all_posts if i.find('p',{'class':'card-text'}).find_all(text=re.compile(request.POST['text']))}
                 posts = posts&text if posts else text
             if request.POST['author']:
-                author = {i['id'] for i in all_posts if i.find('span',{'id':'author'}).find_all(text=re.compile(request.POST['author']))}
+                author = {i['id'] for i in all_posts if i.find('p',{'id':'author'}).find_all(text=re.compile(request.POST['author']))}
                 posts = posts&author if posts else author
             if request.POST['tag']:
                 tag = {i['id'] for i in all_posts if i.find('div',{'id':'tags'}).find_all(text=re.compile(request.POST['tag']))}
