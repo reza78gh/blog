@@ -48,22 +48,35 @@
               <input type="hidden" name="mode" value="normal">
               <button class="btn btn-outline-success" type="submit">Search</button>
             </form>
+            <button class="btn btn-outline-success" data-bs-toggle="collapse" data-bs-target="#collapseSearch" aria-expanded="false" aria-controls="collapseSearch">جستجوی پیشرفته</button>
           </div>
         </div>
       </nav>
-      <form class="d-flex bg-light pb-3" method="POST" action="{% url 'weblog:search' %}">
-        {% csrf_token %}
-        <label for="title">عنوان</label>
-        <input class="form-control ms-2" name="title" type="search" placeholder="عنوان شامل..." aria-label="Search">
-        <label for="text">متن</label>
-        <input class="form-control ms-2" name="text" type="search" placeholder="متن شامل..." aria-label="Search">
-        <label for="author">نویسنده</label>
-        <input class="form-control ms-2" name="author" type="search" placeholder="نویسنده شامل..." aria-label="Search">
-        <label for="tag">برچسب</label>
-        <input class="form-control ms-2" name="tag" type="search" placeholder="برچسب شامل..." aria-label="Search">
-        <input type="hidden" name="mode" value="advance">
-        <button class="btn btn-outline-success" type="submit">Search</button>
-      </form>
+      <div class="collapse px-2" id="collapseSearch">
+        <form class="bg-light pb-3 row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-5 g-1" method="POST" action="{% url 'weblog:search' %}">
+          {% csrf_token %}
+          <div class="col d-lg-flex">
+            <label for="title">عنوان</label>
+            <input class="form-control ms-2" name="title" type="search" placeholder="عنوان شامل..." aria-label="Search">
+          </div>
+          <div class="col d-lg-flex">
+            <label for="text">متن</label>
+            <input class="form-control ms-2" name="text" type="search" placeholder="متن شامل..." aria-label="Search">
+          </div>
+          <div class="col d-lg-flex">
+            <label for="author">نویسنده</label>
+            <input class="form-control ms-2" name="author" type="search" placeholder="نویسنده شامل..." aria-label="Search">
+          </div>
+          <div class="col d-lg-flex">
+            <label for="tag">برچسب</label>
+            <input class="form-control ms-2" name="tag" type="search" placeholder="برچسب شامل..." aria-label="Search">
+          </div>
+        <div class="col py-md-4 p-lg-0 w-auto">
+          <input type="hidden" name="mode" value="advance">
+          <button class="btn btn-outline-success" type="submit">Search</button>
+        </div>
+        </form>
+      </div>
         <div class="collapse p-3" id="collapseExample">
           <div id="categories" class="d-flex"></div>
         </div>
