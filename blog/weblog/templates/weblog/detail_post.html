@@ -2,7 +2,7 @@
 {% load weblog_extras %}
 {% block title %}پست جدید{% endblock title %}
 {% block body %}
-<div class="container w-75">
+<div class="container w-75 my-3">
 <div class="d-flex justify-content-center">
     <img src="{{MEDIA_URL}}/{{ post.img }}" width="400px"  alt="Card image cap">
 </div>
@@ -27,7 +27,13 @@
         <p><span id="like_quantity{{post.id}}">{{ post.post_like|count_like }}</span> نفر پسندیدند</p>&emsp;
         <p><span id="dislike_quantity{{post.id}}">{{ post.post_like|count_dislike }}</span> نفر نپسندیدن</p>
     </div>
+    <div class="border-top mb-2 p-2">
+      {% for tag in post.tag.all %}
+        <a href="{% url 'weblog:tag' tag.id %}" class='text-decoration-none'>#{{ tag }}</a>
+      {% endfor %}
+    </div>
   </div>
+
     {% if post.post_comment.all %}
     <h4 class="bg-secondary text-light py-2 px-4 m-0">نظرات</h4>
     {% endif %}

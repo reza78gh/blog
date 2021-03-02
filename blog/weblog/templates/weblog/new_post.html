@@ -1,10 +1,12 @@
 {% extends 'weblog/base.html' %}
+{% load bootstrap %}
 {% block title %}پست جدید{% endblock title %}
 {% block body %}
+<div class="m-auto my-5 w-50 bg-light py-3 px-5">
 <form enctype="multipart/form-data" action="{% url 'weblog:new_post' %}" method="POST">
     {% csrf_token %}
-    {{ form.as_p }}
-    <label for=""></label>
+    {{ form|bootstrap_horizontal:'col-lg-1' }}
+    <label for="">تگ ها</label>
     <div class="all-tags d-flex flex-column w-25">
         <input type="text" name="tags" id="tag" class="m-1" list="citynames">
         <datalist id="citynames">
@@ -13,7 +15,7 @@
         {% endfor %}
         </datalist>
     </div>
-    <div><button type="button" onclick="newrow()">افزودن تگ</button></div>
-    <input type="submit" value="ثبت">
-</form>
+    <div class="py-3"><button type="button" class="btn btn-dark" onclick="newrow()">افزودن تگ</button></div>
+    <input type="submit" class="btn btn-outline-success" value="ثبت">
+</form></div>
 {% endblock body %}

@@ -19,13 +19,13 @@ def home(request,pk=None,mode=None):
     if mode == 'category':
         title = Category.objects.get(pk=pk)
         c = subtract2(title,[])
-        posts = Post.objects.filter(category__in=c)
+        posts = Post.objects.filter(accepted=True,activate=True,category__in=c)
     elif mode == 'tag':
         title = Tag.objects.get(pk=pk)
-        posts = Post.objects.filter(tag=title)
+        posts = Post.objects.filter(accepted=True,activate=True,tag=title)
     else:
         title = ''
-        posts = Post.objects.all()
+        posts = Post.objects.filter(accepted=True,activate=True,)
     return render(request,'weblog/base.html',{'posts':posts, 'title':title})
 
 @permission_required("weblog.can_write")
@@ -36,7 +36,8 @@ def new_post(request):
             post = form.save(commit=False)
             post.author = request.user
             post.save()
-            post.tag.set(Tag.objects.filter(name__in=request.POST.getlist('tags')))
+            post.tag.set([Tag.objects.get_or_create(name=i)[0] for i in request.POST.getlist('tags') if i])
+            return HttpResponseRedirect(reverse('weblog:detail_post', args=(post.id,)))
     else:
         form = NewPost()
     tags = Tag.objects.all()
