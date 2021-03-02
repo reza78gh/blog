@@ -1,9 +1,12 @@
 {% extends 'weblog/base.html' %}
+{% load bootstrap %}
 {% block title %}ورود به حساب کاربری{% endblock title %}
 {% block body %}
+<div class="m-auto my-5 w-25 bg-light py-3 px-3">
 <form action="{% url 'weblog:login' %}" method="POST">
     {% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" value="ورود">
+    {{ form|bootstrap_horizontal:'col-lg-1' }}
+    <input type="submit" class="btn btn-outline-success my-3" value=" ورود ">
 </form>
+</div>
 {% endblock body %}

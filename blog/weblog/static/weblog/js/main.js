@@ -56,27 +56,28 @@ function cloneRow($input){
     var $newRow=$input.clone().appendTo(".all-tags")
 }
 
-console.log('here')
-var a=37
-// $(`button[id="like${a}"]`).toggleClass('btn-danger btn-outline-danger').children("span[id='dislike_quantity']").text(20)
-console.log(`.btn-group[id=${a}] button`)
-
 
 
 // set like for posts
-function like(post_id,value) {
+function like(post_id,value,user) {
     $.ajax({
         url: "/api/like-by-post/"+post_id,
         type: "GET",
         success : function(json) {
             var csrf = $('input[name ="csrfmiddlewaretoken"]')[0].value
-            json = json[0]
-            if (json){
-                if (json.value == value){
+            var result = undefined 
+            for (i in json){
+                if (json[i].user == user){
+                    result = json[i]
+                    break
+                }
+            }
+            if (result){
+                if (result.value == value){
                     console.log('must delete')
                     console.log(csrf)
                     $.ajax({
-                        url:'/api/like-post/'+json.id,
+                        url:'/api/like-post/'+result.id,
                         headers: {
                             "X-CSRFTOKEN":csrf,
                         },
@@ -95,7 +96,7 @@ function like(post_id,value) {
                 }else{
                     console.log('most update')
                     $.ajax({
-                        url:'/api/like-post/'+json.id,
+                        url:'/api/like-post/'+result.id,
                         headers: {
                             "X-CSRFTOKEN":csrf,
                         },
@@ -131,8 +132,8 @@ function like(post_id,value) {
                         'post' : post_id,
                         'value' : value,
                     },
-                    success : function(json) {
-                        if (json.value){
+                    success : function(result) {
+                        if (result.value){
                             $(`#like${post_id}`).toggleClass('btn-danger btn-outline-danger')
                             $(`#like_quantity${post_id}`).text((+$(`#like_quantity${post_id}`).text()+1))
                         }else{
@@ -147,89 +148,6 @@ function like(post_id,value) {
 }
 
 
-// // set like for posts
-// function like(post_id,value) {
-//     $.ajax({
-//         url: "/api/like-by-post/"+post_id,
-//         type: "GET",
-//         success : function(json) {
-//             var csrf = $('input[name ="csrfmiddlewaretoken"]')[0].value
-//             json = json[0]
-//             if (json){
-//                 if (json.value == value){
-//                     console.log('must delete')
-//                     console.log(csrf)
-//                     $.ajax({
-//                         url:'/api/like-post/'+json.id,
-//                         headers: {
-//                             "X-CSRFTOKEN":csrf,
-//                         },
-//                         type: "DELETE",
-//                         success : function() {
-//                             console.log("success delete");
-//                             if (value){
-//                                 $('#like-btn').toggleClass('btn-danger btn-outline-danger')
-//                                 $('#like_quantity').text((+$('#like_quantity').text()-1))
-//                             }else{
-//                                 $('#dislike-btn').toggleClass('btn-secondary btn-outline-secondary')
-//                                 $('#dislike_quantity').text((+$('#dislike_quantity').text()-1))
-//                             }
-//                         },
-//                     })
-//                 }else{
-//                     console.log('most update')
-//                     $.ajax({
-//                         url:'/api/like-post/'+json.id,
-//                         headers: {
-//                             "X-CSRFTOKEN":csrf,
-//                         },
-//                         type: "PUT",
-//                         data: {
-//                             'post' : post_id,
-//                             'value' : value,
-//                         },
-//                         success : function() {
-//                             if (value){
-//                                 $('#like-btn').toggleClass('btn-danger btn-outline-danger')
-//                                 $('#dislike-btn').toggleClass('btn-secondary btn-outline-secondary')
-//                                 $('#like_quantity').text((+$('#like_quantity').text()+1))
-//                                 $('#dislike_quantity').text((+$('#dislike_quantity').text()-1))
-//                             }else{
-//                                 $('#like-btn').toggleClass('btn-danger btn-outline-danger')
-//                                 $('#dislike-btn').toggleClass('btn-secondary btn-outline-secondary')
-//                                 $('#like_quantity').text((+$('#like_quantity').text()-1))
-//                                 $('#dislike_quantity').text((+$('#dislike_quantity').text()+1))
-//                             }
-//                         },
-//                     })
-//                 }
-//             }else{
-//                 console.log('postt')
-//                 $.ajax({
-//                     url:'/api/like-post/',
-//                     type: "POST",
-//                     headers: {
-//                         "X-CSRFTOKEN":csrf,
-//                     },
-//                     data: {
-//                         'post' : post_id,
-//                         'value' : value,
-//                     },
-//                     success : function(json) {
-//                         if (json.value){
-//                             $('#like-btn').toggleClass('btn-danger btn-outline-danger')
-//                             $('#like_quantity').text((+$('#like_quantity').text()+1))
-//                         }else{
-//                             $('#dislike-btn').toggleClass('btn-secondary btn-outline-secondary')
-//                             $('#dislike_quantity').text((+$('#dislike_quantity').text()+1))
-//                         }
-//                     },
-//                 })
-//             }
-//         },
-//     })
-// }
-
 // set comment of posts
 $('#successMessage').hide();
 function commentsend(post_id) {
@@ -241,7 +159,7 @@ function commentsend(post_id) {
         data: {
             "csrfmiddlewaretoken":csrf_token.value,
             'text' : textarea[0].value,
-            'comment' : comment_id,
+            'post' : post_id,
         },
         success : function() {
             console.log("success"); 
@@ -252,7 +170,7 @@ function commentsend(post_id) {
     })
 }
 
-function like_comment(my,comment_id,value) {
+function like_comment(my,comment_id,value,user) {
     var like_btn = $(my).parent().children('#like')
     var dislike_btn = $(my).parent().children('#dislike')
     var like_quantity = $(my).parent().children('small').children('#like_quantity')
@@ -262,13 +180,19 @@ function like_comment(my,comment_id,value) {
         type: "GET",
         success : function(json) {
             var csrf = $('input[name ="csrfmiddlewaretoken"]')[0].value
-            json = json[0]
-            if (json){
-                if (json.value == value){
+            var result = undefined 
+            for (i in json){
+                if (json[i].user == user){
+                    result = json[i]
+                    break
+                }
+            }
+            if (result){
+                if (result.value == value){
                     console.log('must delete')
                     console.log(csrf)
                     $.ajax({
-                        url:'/api/like-comment/'+json.id,
+                        url:'/api/like-comment/'+result.id,
                         headers: {
                             "X-CSRFTOKEN":csrf,
                         },
@@ -287,7 +211,7 @@ function like_comment(my,comment_id,value) {
                 }else{
                     console.log('most update')
                     $.ajax({
-                        url:'/api/like-comment/'+json.id,
+                        url:'/api/like-comment/'+result.id,
                         headers: {
                             "X-CSRFTOKEN":csrf,
                         },
@@ -323,8 +247,8 @@ function like_comment(my,comment_id,value) {
                         'comment' : comment_id,
                         'value' : value,
                     },
-                    success : function(json) {
-                        if (json.value){
+                    success : function(result) {
+                        if (result.value){
                             like_btn.toggleClass('btn-danger btn-outline-danger')
                             like_quantity.text((+like_quantity.text()+1))
                         }else{

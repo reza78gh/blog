@@ -54,20 +54,6 @@ def register(request):
     return render(request,'weblog/register.html',{'form':form})
 
 
-@login_required
-def add_comment(request,post_id):
-    if request.POST:
-        form = CommentForm(request.POST)
-        if form.is_valid():
-            Comment.objects.create(text=form.cleaned_data['text'],
-                                   post=Post.objects.get(id=post_id),
-                                   user=request.user)
-            return HttpResponseRedirect(reverse('weblog:home'))
-    else:
-        form = CommentForm()
-    return render(request,'weblog/add_comment.html',{'form':form, 'post_id':post_id})
-
-
 class DetailPostView(generic.DetailView):
     model = Post
     template_name = 'weblog/detail_post.html'
