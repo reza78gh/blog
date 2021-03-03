@@ -2,6 +2,7 @@ from django.shortcuts import render,HttpResponseRedirect,reverse
 from .forms import *
 from .models import *
 from django.contrib.auth.decorators import permission_required,login_required
+from django.contrib.auth import login
 from django.db import IntegrityError
 from django.views import generic
 import requests
@@ -47,7 +48,8 @@ def register(request):
     if request.POST:
         form = NewUserForm(request.POST,request.FILES)
         if form.is_valid():
-            form.save()
+            user = form.save()
+            login(request,user)
             return HttpResponseRedirect(reverse('weblog:home'))
     else:
         form = NewUserForm()
@@ -68,7 +70,7 @@ def search(request):
     if request.POST:
         r = requests.get('http://127.0.0.1:8000/')
         soup = BeautifulSoup(r.content, 'html.parser')
-        all_posts = soup.find_all('div',{'class':'col'})
+        all_posts = soup.find_all('div',{'class':'detail_post'})
         if request.POST['mode'] == 'normal':
             posts = [i['id'] for i in all_posts if i.find_all(text=re.compile(request.POST['search']))]
             mypost = Post.objects.filter(id__in=posts)

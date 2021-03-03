@@ -26,6 +26,9 @@
                     دسته بندی ها</button>
               </li>
               {% if user.is_authenticated %}
+              {% if request.user.is_staff %}
+                <li class="nav-item"><a href="/admin/" class='nav-link'>داشبورد</a></li>
+              {% endif %}
               {% if  perms.weblog.can_write %}
               <li class="nav-item">
                 <a class="nav-link" href="{% url 'weblog:new_post' %}">پست جدید</a>
@@ -46,9 +49,9 @@
               {% csrf_token %}
               <input class="form-control ms-2" name="search" type="search" placeholder="Search" aria-label="Search">
               <input type="hidden" name="mode" value="normal">
-              <button class="btn btn-outline-success" type="submit">Search</button>
+              <button class="btn btn-outline-success" type="submit">جستجو</button>
             </form>
-            <button class="btn btn-outline-success" data-bs-toggle="collapse" data-bs-target="#collapseSearch" aria-expanded="false" aria-controls="collapseSearch">جستجوی پیشرفته</button>
+            <button class="btn btn-outline-success" data-bs-toggle="collapse" data-bs-target="#collapseSearch" aria-expanded="false" aria-controls="collapseSearch">پیشرفته</button>
           </div>
         </div>
       </nav>
@@ -73,7 +76,7 @@
           </div>
         <div class="col py-md-4 p-lg-0 w-auto">
           <input type="hidden" name="mode" value="advance">
-          <button class="btn btn-outline-success" type="submit">Search</button>
+          <button class="btn btn-outline-success" type="submit">جستجو</button>
         </div>
         </form>
       </div>
@@ -85,30 +88,33 @@
   <div class="album py-5">
     <div class="container">
 
-      <div class="row row-cols-1 row-cols-md-2  row-cols-lg-3 g-5">
+      <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-5">
         {% csrf_token %}
         {% for post in posts %}
-        <div class="col" id="{{post.id}}" style="max-width: 600px;">
+        <div class="col posts" id="{{post.id}}" style="max-width: 600px;">
           <div class="card shadow-sm bg-light">
-            <div class="d-flex justify-content-between p-2">
-              <div class="d-flex p-2">
-                <img class="rounded-circle" width="40px" height="40px" src="/{{ post.author.image }}"
-                data-holder-rendered="true">
-                <p id="author" class="p-2 m-0">{{ post.author }}</p>
-              </div>
-            <p class="p-3 m-0">{{ post.category }}</p>
-          </div>
-            <img src="/{{ post.img }}" height="250px" alt="Card image cap">
-            <div class="card-body"> 
-              <h3>{{ post.title }}</h3>
-              <div  style="min-height: 100px;">
-              <p class="card-text">{{ post.text|truncatewords:15 }}</p>
-              <div class="d-flex" id="tags">
-                {% for tag in post.tag.all %}
-                  <a href="{% url 'weblog:tag' tag.id %}" class='text-decoration-none'>#{{ tag }}</a>
-                {% endfor %}
-              </div>
+              <div class="d-flex justify-content-between p-2">
+                <div class="d-flex p-2">
+                  <img class="rounded-circle" width="40px" height="40px" src="/{{ post.author.image }}"
+                  data-holder-rendered="true">
+                  <p id="author" class="p-2 m-0">{{ post.author }}</p>
+                </div>
+              <p class="p-3 m-0">{{ post.category }}</p>
             </div>
+              <img src="/{{ post.img }}" height="250px" alt="Card image cap">
+              <div class="card-body"> 
+              <div class="detail_post" id="{{post.id}}" >
+                <p id="author"  hidden>{{ post.author}}</p>
+                <h3>{{ post.title }}</h3>
+                <div  style="min-height: 100px;">
+                <p class="card-text">{{ post.text|truncatewords:15 }}</p>
+                <div class="d-flex" id="tags">
+                  {% for tag in post.tag.all %}
+                    <a href="{% url 'weblog:tag' tag.id %}" class='text-decoration-none'>#{{ tag }}</a>
+                  {% endfor %}
+                </div>
+              </div>
+              </div>
               <div class="d-flex justify-content-between align-items-center">
                 <div class="btn-group" id="{{ post.id }}">
                   <a href="{% url 'weblog:detail_post' post.id %}"><button type="button" class="btn btn-sm btn-outline-success">ادامه مطلب</button></a>
