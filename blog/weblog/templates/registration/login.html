@@ -2,7 +2,7 @@
 {% load bootstrap %}
 {% block title %}ورود به حساب کاربری{% endblock title %}
 {% block body %}
-<div class="m-auto my-5 w-25 bg-light py-3 px-3">
+<div class="m-auto my-5 col-10 col-lg-4 bg-light py-3 px-3 shadow">
 <form action="{% url 'weblog:login' %}" method="POST">
     {% csrf_token %}
     {{ form|bootstrap_horizontal:'col-lg-1' }}

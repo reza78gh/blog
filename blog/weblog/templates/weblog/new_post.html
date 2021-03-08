@@ -2,7 +2,7 @@
 {% load bootstrap %}
 {% block title %}پست جدید{% endblock title %}
 {% block body %}
-<div class="m-auto my-5 w-50 bg-light py-3 px-5">
+<div class="m-auto my-5 col-10 col-lg-6 bg-light py-3 px-5 shadow">
 <form enctype="multipart/form-data" action="{% url 'weblog:new_post' %}" method="POST">
     {% csrf_token %}
     {{ form|bootstrap_horizontal:'col-lg-1' }}

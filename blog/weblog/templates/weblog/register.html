@@ -1,12 +1,12 @@
 {% extends 'weblog/base.html' %}
-
+{% load bootstrap %}
 {% block title %}ثبت نام{% endblock title %}
 {% block body %}
-<form enctype="multipart/form-data" action="{% url 'weblog:register' %}" method="POST">
-    {% csrf_token %}
-    <table>
-        {{ form.as_table }}
-    </table>
-    <input type="submit" value="ثبت نام">
-</form>
+<div class="m-auto my-5 col-10 col-lg-4 bg-light py-3 px-3 shadow">
+    <form action="{% url 'weblog:login' %}" method="POST">
+        {% csrf_token %}
+        {{ form|bootstrap_horizontal:'col-lg-1' }}
+        <input type="submit" class="btn btn-outline-success my-3" value=" ورود ">
+    </form>
+</div>
 {% endblock body %}

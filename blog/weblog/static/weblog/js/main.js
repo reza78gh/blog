@@ -1,3 +1,4 @@
+$("#tag").width(150)
 load_posts()
 // Load all posts on page load
 function load_posts() {
