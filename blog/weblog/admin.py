@@ -22,14 +22,23 @@ class CostumeUserAdmin(UserAdmin):
 class PostAdmin(admin.ModelAdmin):
     list_display = ['title', 'author', 'category', 'activate', 'accepted']
     actions = ['accept_post', 'active_post']
+    
+    def get_form(self, request, obj=None, **kwargs):
+        self.exclude = []
+        if request.user.groups.filter(name='نویسنده'):
+            self.exclude = ['accepted', 'author']
+        return super(PostAdmin, self).get_form(request, obj, **kwargs)
 
     def accept_post(self, request, queryset):
-        updated = queryset.update(accepted=True)
-        self.message_user(request, ngettext(
-            '%d پست تایید شد',
-            '%d پست تایید شدند',
-            updated,
-        ) % updated, messages.SUCCESS)
+        if request.user.groups.filter(name='نویسنده'):
+            self.message_user(request,'انجام نشد، شما اجازه تایید کردن ندارید', messages.ERROR)
+        else:
+            updated = queryset.update(accepted=True)
+            self.message_user(request, ngettext(
+                '%d پست تایید شد',
+                '%d پست تایید شدند',
+                updated,
+            ) % updated, messages.SUCCESS)
 
     accept_post.short_description = "تایید کردن"
 
@@ -42,6 +51,12 @@ class PostAdmin(admin.ModelAdmin):
         ) % updated, messages.SUCCESS)
 
     active_post.short_description = "فعال کردن"
+        
+    def get_queryset(self, request):
+        if request.user.groups.filter(name='نویسنده'):
+            return Post.objects.filter(author=request.user)
+        else:
+            return Post.objects.all()
 
 
 class CommentAdmin(admin.ModelAdmin):

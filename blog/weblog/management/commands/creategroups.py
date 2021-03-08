@@ -13,7 +13,7 @@ class Command(BaseCommand):
         edit_post = Permission.objects.get(codename='change_post')
         can_manage = Permission.objects.get(codename='can_manage')
         new_group, _=Group.objects.get_or_create(name='نویسنده')
-        new_group.permissions.add(can_write)
+        new_group.permissions.add(can_write,edit_post)
         new_group, _=Group.objects.get_or_create(name='ویراستار')
         new_group.permissions.add(can_write,can_edit,view_post,edit_post,view_comment,edit_comment)
         new_group, _=Group.objects.get_or_create(name='مدیر')
